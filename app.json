@@ -1,0 +1,7 @@
+{
+  "name": "St Pius V Class of '17 Grad Party Survey",
+  "description": "grad party survey for parents of class of '17 students",
+  "repository": "https://github.com/jbaclig/spv-grad-survey",
+  "keywords": ["node", "express", "static"],
+  "image": "heroku/nodejs"
+}

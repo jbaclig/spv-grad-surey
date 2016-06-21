@@ -1,0 +1,26 @@
+{
+  "name": "spv-grad-survey",
+  "version": "1.0",
+  "description": "A Survey for the graduation party of St. Pius V's class of '17'",
+  "engines": {
+    "node": "5.9.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "pg": "4.x",
+    "ejs": "2.4.1",
+    "express": "4.13.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbaclig/spv-grad-survey"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ]
+}
