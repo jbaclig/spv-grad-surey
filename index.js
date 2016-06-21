@@ -15,6 +15,20 @@ app.get('/', function(request,response) {
   response.render('pages/index');
 });
 
+app.get('/results', function(request, response){
+  pg.connect(process.env.DATABASE_URL, function(err, cliend, done){
+    client.query('SELECT * FROM question1',function(err,result){
+      done();
+      if(err) {
+        cnosole.error(err); response.send("Error " + err);
+      }
+      else {
+        response.render('pages/results', {results: result.rows});
+      }
+    });
+  });
+});
+
 app.listen(app.get('port'),function(){
   console.log('Node app is running on port', app.get('port'));
 });
