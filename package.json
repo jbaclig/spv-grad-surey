@@ -1,6 +1,6 @@
 {
   "name": "spv-grad-survey",
-  "version": "1.0",
+  "version": "0.2.5",
   "description": "A Survey for the graduation party of St. Pius V's class of '17'",
   "engines": {
     "node": "5.9.1"
@@ -22,5 +22,6 @@
     "node",
     "heroku",
     "express"
-  ]
+  ],
+  "license": "MIT"
 }
