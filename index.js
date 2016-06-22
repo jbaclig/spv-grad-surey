@@ -11,22 +11,27 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-app.get('/', function(request,response) {
-  response.render('pages/index');
-});
-
 app.get('/results', function(request, response){
   pg.connect(process.env.DATABASE_URL, function(err, client, done){
     client.query('SELECT * FROM question1',function(err,result){
       done();
       if(err) {
-        cnosole.error(err); response.send("Error " + err);
+        console.error(err);
+        response.send("Error " + err);
       }
       else {
         response.render('pages/results', {results: result.rows});
       }
     });
   });
+});
+
+app.post('/',function(request,response){
+  console.log('post request received');
+});
+
+app.get('/', function(request,response) {
+  response.render('pages/index');
 });
 
 app.listen(app.get('port'),function(){
