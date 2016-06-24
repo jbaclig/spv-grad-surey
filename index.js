@@ -150,9 +150,6 @@ app.post('/',function(request,response){
     q3.forEach(function(value,key){
       queryQ3.push('UPDATE question3 SET ' + value + '=' + value + '+1 WHERE id=1');
     });
-    /*queryQ3.forEach(function(value,key){
-      console.log(key+': '+value);
-    });*/
   }
   if(typeof q4 !== 'undefined') {
     queryQ4 = 'UPDATE question4 SET ' + q4 + '=' + q4 + '+1 WHERE id=1'
@@ -163,14 +160,14 @@ app.post('/',function(request,response){
     });
   }
   if(typeof q5other !== 'undefined'){
-    queryQ5Other = 'INSERT INTO question5_other VALUES (\''+q5other+'\')';
+    queryQ5Other = 'INSERT INTO question5_other VALUES ($$'+q5other+'$$)';
   }
   if(typeof q6 !== 'undefined'){
     if(q6.length === 1){
-      queryQ6 = 'INSERT INTO venue_recs VALUES (\''+q6[0]+'\')';
+      queryQ6 = 'INSERT INTO venue_recs VALUES ($$'+q6[0]+'$$)';
     }
     else {
-      queryQ6 = 'INSERT INTO venue_recs VALUES (\''+q6[0]+'\',\''+q6[1]+'\')';
+      queryQ6 = 'INSERT INTO venue_recs VALUES ($$'+q6[0]+'$$,$$'+q6[1]+'$$)';
     }
   }
 

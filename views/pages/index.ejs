@@ -17,7 +17,7 @@
       <p>Thank you,<br>Bernadette Baclig<br>(Excited 8<sup>th</sup> Grade Parent - Samie's Mom)</p>
     </div>
     <div class="container">
-      <form>
+      <form id="grad-survey">
         <p>Please note: All questions are for the Graduation Party.</p>
         <div class="form-group">
           <label>The graduation ceremony is on Friday May 26, 2017 @ 10am in SPV. What date/time do you want to have the party? (Select one)</label>
@@ -136,7 +136,44 @@
           <br>
           <input type="text" id="q6-address" class="form-control" placeholder= "Venue Address/Website">
         </div>
-        <button id="survey-submit" type="submit" class="btn btn-default">Submit</button>
+        <button id="survey-submit"
+        type="button"
+        class="btn btn-primary btn-lg"
+        data-toggle="modal"
+        data-target="#thank-you-modal">
+          Submit
+        </button>
+        <div class="modal fade" id="thank-you-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button"
+                class="close"
+                data-dismiss="modal"
+                arial-lable="Close">
+                  <span aria-hiddnen="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                  Thank you for participating in this survey.
+                </h4>
+              </div>
+              <div class="modal-body">
+                <p>
+                  We look forward to celebrating this special occassion with you
+                  and your family!
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button
+                class="btn btn-default"
+                type="button"
+                data-dismiss="modal">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
 
@@ -193,6 +230,8 @@
         }).fail(function(xhr,textStatus,errorThrown){
           alert(errorThrown + xhr.responseText);
         });
+
+        $('#grad-survey').trigger('reset');
       };
     </script>
   </body>
