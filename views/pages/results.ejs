@@ -8,9 +8,58 @@
       <div class="page-header">
         <h1>Survery Results</h1>
       </div>
+      <h4>The graduation ceremony is on Friday May 26, 2017 @ 10am in SPV. What
+        date/time do you want to have the party? </h4>
+      <% question1.forEach(function(r){ %>
+        <ul>
+          <li>Lunch on Friday May 26, 2017: <%= r.a %></li>
+          <li>Dinner on Friday May 26, 2017: <%= r.b %></li>
+          <li>Dinner on Saturday May 27, 2017: <%= r.c %></li>
+        </ul>
+      <% }); %>
+      <h4>How much are you willing to pay per person?</h4>
+      <% question2.forEach(function(r){ %>
+        <ul>
+          <li>$15 - $25: <%= r.a %></li>
+          <li>$25 - $50: <%= r.b %></li>
+        </ul>
+      <% }); %>
+      <h4>Who would you like to bring/invite to the party?</h4>
+      <% question3.forEach(function(r){ %>
+        <ul>
+            <li>Spouse: <%= r.a %></li>
+            <li>8<sup>th</sup> grader's sibling: <%= r.b %></li>
+            <li>Grandparents: <%= r.c %></li>
+            <li>Others: <%= r.d %></li>
+        </ul>
+      <% }); %>
+      <h4>How many people are you inviting?</h4>
+      <% question4.forEach(function(r){ %>
+        <ul>
+            <li>1 - 5 people: <%= r.a %></li>
+            <li>6 - 10 people: <%= r.b %></li>
+            <li>More than 10 people: <%= r.c %></li>
+        </ul>
+      <% }); %>
+      <h4>Are you willing to volunteer or donate?</h4>
+      <% question5.forEach(function(r){ %>
+        <ul>
+            <li>Decorate: <%= r.a %></li>
+            <li>DJ: <%= r.b %></li>
+            <li>Photo Booth: <%= r.c %></li>
+            <li>Other: <%= r.d %></li>
+        </ul>
+      <% }); %>
+      <h5>Other Submissions</h5>
       <ul>
-        <% results.forEach(function(r){ %>
-          <li><%= r.a %> - <%= r.b %> - <%= r.c %></li>
+        <% question5Other.forEach(function(r){ %>
+          <li><%= r.other %></li>
+        <% }); %>
+      </ul>
+      <h4>Venue Recomendations</h4>
+      <ul>
+        <% venueRecs.forEach(function(r){ %>
+          <li><%= r.name %> - <%= r.address %></li>
         <% }); %>
       </ul>
     </div>
