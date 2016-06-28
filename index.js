@@ -162,13 +162,11 @@ app.post('/',function(request,response){
   if(typeof q5other !== 'undefined'){
     queryQ5Other = 'INSERT INTO question5_other VALUES ($$'+q5other+'$$)';
   }
-  if(typeof q6 !== 'undefined'){
-    if(q6.length === 1){
-      queryQ6 = 'INSERT INTO venue_recs VALUES ($$'+q6[0]+'$$)';
-    }
-    else {
-      queryQ6 = 'INSERT INTO venue_recs VALUES ($$'+q6[0]+'$$,$$'+q6[1]+'$$)';
-    }
+  if(q6.length === 1){
+    queryQ6 = 'INSERT INTO venue_recs VALUES ($$'+q6[0]+'$$)';
+  }
+  else if (q6.length === 2){
+    queryQ6 = 'INSERT INTO venue_recs VALUES ($$'+q6[0]+'$$,$$'+q6[1]+'$$)';
   }
 
   pg.connect(process.env.DATABASE_URL, function(err, client, done){
