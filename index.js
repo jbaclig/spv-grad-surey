@@ -1,5 +1,55 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var basicAuth = require('basic-auth');
+
+var auth = function(req,res,next){
+  var user = basicAuth(req);
+  if(!user||!user.name||!user.pass){
+    res.set('WWW-Authenticate','Basic realm=Authorization Required');
+    res.sendStatus(401);
+    return;
+  }
+  var passwordQuery = "SELECT * FROM access WHERE password=crypt('"+
+                      user.pass+ "',password);";
+
+  pg.connect(process.env.DATABASE_URL, function(err, client, done){
+    client.query(passwordQuery,function(err,result){
+      if(user.name==='spv17'&&result.rows.length===1&&(result.rows[0]).page==='home'){
+        next();
+      }
+      else {
+        res.set('WWW-Authenticate','Basic realm=Authorization Required');
+        res.sendStatus(401);
+        return;
+      }
+    });
+  });
+}
+
+var authResults = function(req,res,next){
+  var user = basicAuth(req);
+  if(!user||!user.name||!user.pass){
+    res.set('WWW-Authenticate','Basic realm=Authorization Required');
+    res.sendStatus(401);
+    return;
+  }
+  var passwordQuery = "SELECT * FROM access WHERE password=crypt('"+
+                      user.pass+ "',password);";
+
+  pg.connect(process.env.DATABASE_URL, function(err, client, done){
+    client.query(passwordQuery,function(err,result){
+      if(user.name==='bbaclig'&&result.rows.length===1&&(result.rows[0]).page==='results'){
+        next();
+      }
+      else {
+        res.set('WWW-Authenticate','Basic realm=Authorization Required');
+        res.sendStatus(401);
+        return;
+      }
+    });
+  });
+}
+
 var app = express();
 
 var pg = require('pg');
@@ -15,7 +65,7 @@ app.use(bodyParser.json());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-app.get('/results', function(request, response, next){
+app.get('/results', authResults, function(request, response, next){
   pg.connect(process.env.DATABASE_URL, function(err, client, done){
     client.query('SELECT * FROM question1',function(err,result){
       done();
@@ -241,7 +291,7 @@ app.post('/',function(request,response){
   });
 });
 
-app.get('/', function(request,response) {
+app.get('/', auth, function(request,response) {
   response.render('pages/index');
 });
 
