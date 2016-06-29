@@ -1,24 +1,55 @@
-$('#form-submit').on('click',submitSurvey);
+$('#survey-submit').on('click',submitSurvey);
 
 function submitSurvey(event){
   event.preventDefault();
 
-  var response = {
-    'q1': $('input[name="q1-group"]:checkced').val(),
-    'q2': $('input[name="q2-group"]:checked').val()
+  var q3answers = [];
+  $('input[name="q3-group"]:checked').each(function(){
+    q3answers.push($(this).attr('value'));
+  });
+
+  var q5answers = [];
+  $('input[name="q5-group"]:checked').each(function(){
+    q5answers.push($(this).attr('value'));
+  });
+
+  var q5other;
+  if($('#q5-d').is(':checked')) {
+    q5other = $('#q5-other-text').val();
   }
+
+  var q6answers = [];
+  var q6venue = $('#q6-venue').val(), q6address = $('#q6-address').val();
+  if(q6venue){
+    q6answers.push(q6venue);
+  }
+  if(q6address){
+    q6answers.push(q6address);
+  }
+
+  var answers = JSON.stringify({
+    q1: $('input[name="q1-group"]:checked').val(),
+    q2: $('input[name="q2-group"]:checked').val(),
+    q3: q3answers,
+    q4: $('input[name="q4-group"]:checked').val(),
+    q5: q5answers,
+    q5O: q5other,
+    q6: q6answers
+  });
+
+  //console.log(answers);
 
   $.ajax({
     type: 'POST',
-    data: response,
+    data: answers,
     url:'/',
-    dataType: 'JSON'
-  }).done(function(response){
-    if(response.msg ===''){
-      alert('survey submitted (form.js)');
-    }
-    else {
-      alert('Error: ' + response.msg);
-    }
+    dataType: 'JSON',
+    contentType: 'application/json'
+  }).done(function(data){
+    console.log(data);
+  }).fail(function(xhr,textStatus,errorThrown){
+    alert(errorThrown + xhr.responseText);
   });
+
+  $('#grad-survey').trigger('reset');
 };
