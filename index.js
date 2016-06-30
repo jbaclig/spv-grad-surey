@@ -34,42 +34,32 @@ var checkCredentials = function(username,password,route,callback){
       if(err){
         throw err;
       }
-      console.log('result.rows[0]: '+result.rows[0]);
+
       if(typeof result.rows[0] !== 'undefined') {
-        console.log('results returned!');
         return callback(true);
       }
       else {
-        console.log('no results returned...');
         return callback(false);
       }
     });
   });
 }
 
-/*var auth = function(req,res,next){
-  var user = basicAuth(req);
-  if(!user||!user.name||!user.pass){
-    res.set('WWW-Authenticate','Basic realm=Authorization Required');
-    res.sendStatus(401);
-    return;
-  }
-  var passwordQuery = "SELECT * FROM access WHERE password=crypt('"+
-                      user.pass+ "',password);";
-
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query(passwordQuery,function(err,result){
-      if(user.name==='spv17'&&result.rows.length===1&&(result.rows[0]).page==='home'){
-        next();
-      }
-      else {
-        res.set('WWW-Authenticate','Basic realm=Authorization Required');
-        res.sendStatus(401);
-        return;
-      }
-    });
+var getResults = function(table,client,results,callback){
+  var query = "SELECT * FROM " + table;
+  client.query(query,function(err,result){
+    if(err){
+      throw err;
+    }
+    console.log(table+' result: '+result.rows);
+    return callback(result.rows);
   });
-}*/
+}
+
+var renderResults = function(client,results,res){
+
+}
+
 
 var auth = function(req,res,next) {
   function unauthorized(res) {
@@ -90,128 +80,75 @@ var auth = function(req,res,next) {
   }
 
   checkCredentials(user.name,user.pass,route,function(result){
-    console.log('checkCredentials result: '+result);
     if(result){
-      console.log('next function');
       next();
     }
     else {
-      console.log('unauthorized');
       return unauthorized(res);
     }
   });
 }
 
+app.get('/results',auth,function(req,res,next){
+  var tables = ['question1','question2','question3','question4','question5',
+                'question5_other','venue_recs'];
+  var results = new Object();
+  var resultsCount = 0;
 
+  var client = new pg.Client(process.env.DATABASE_URL);
+  client.connect(function(err){
+    if(err){
+      throw err;
+    }
 
-app.get('/results', auth, function(request, response, next){
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query('SELECT * FROM question1',function(err,result){
-      done();
-      if(err) {
-        console.error(err);
-        response.send("Error " + err);
-      }
-      else {
-        request.question1 = result.rows;
-        next();
-      }
-
+    tables.forEach(function(table){
+      getResults(table,client,results,function(result){
+        console.log('callback for '+table);
+        switch(table) {
+          case 'question1':
+            req.question1 = result;
+            break;
+          case 'question2':
+            req.question2 = result;
+            break;
+          case 'question3':
+            req.question3 = result;
+            break;
+          case 'question4':
+            req.question4 = result;
+            break;
+          case 'question5':
+            req.question5 = result;
+            break;
+          case 'question5_other':
+            req.question5_other = result;
+            console.log('req.q5_o: '+req.question5_other);
+            break;
+          case 'venue_recs':
+            req.venue_recs = result;
+            break;
+        }
+        resultsCount++;
+        if(resultsCount === tables.length) {
+          client.end(function(err){
+            if(err){
+              throw err;
+            }
+          });
+          next();
+        }
+      });
     });
   });
-},function(request, response, next){
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query('SELECT * FROM question2',function(err,result){
-      done();
-      if(err) {
-        console.error(err);
-        response.send("Error " + err);
-      }
-      else {
-        request.question2 = result.rows;
-        next();
-      }
-    });
-  });
-},function(request, response, next){
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query('SELECT * FROM question3',function(err,result){
-      done();
-      if(err) {
-        console.error(err);
-        response.send("Error " + err);
-      }
-      else {
-        request.question3 = result.rows;
-        next();
-      }
-    });
-  });
-},function(request, response, next){
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query('SELECT * FROM question4',function(err,result){
-      done();
-      if(err) {
-        console.error(err);
-        response.send("Error " + err);
-      }
-      else {
-        request.question4 = result.rows;
-        next();
-      }
-    });
-  });
-},function(request, response, next){
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query('SELECT * FROM question5',function(err,result){
-      done();
-      if(err) {
-        console.error(err);
-        response.send("Error " + err);
-      }
-      else {
-        request.question5 = result.rows;
-        next();
-      }
-    });
-  });
-},function(request, response, next){
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query('SELECT * FROM question5_other',function(err,result){
-      done();
-      if(err) {
-        console.error(err);
-        response.send("Error " + err);
-      }
-      else {
-        request.question5_other = result.rows;
-        next();
-      }
-    });
-  });
-},function(request, response, next){
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query('SELECT * FROM venue_recs',function(err,result){
-      done();
-      if(err) {
-        console.error(err);
-        response.send("Error " + err);
-      }
-      else {
-        request.venue_recs = result.rows;
-        next();
-      }
-    });
-  });
-},function(request, response){
-  response.render('pages/results',{
-    question1: request.question1,
-    question2: request.question2,
-    question3: request.question3,
-    question4: request.question4,
-    question5: request.question5,
-    question5Other: request.question5_other,
-    venueRecs: request.venue_recs
+},function(req, res){
+  res.render('pages/results',{
+    question1: req.question1,
+    question2: req.question2,
+    question3: req.question3,
+    question4: req.question4,
+    question5: req.question5,
+    question5Other: req.question5_other,
+    venueRecs: req.venue_recs
   });
 });
 
