@@ -1,8 +1,53 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var basicAuth = require('basic-auth');
+var app = express();
+var pg = require('pg');
 
-var auth = function(req,res,next){
+app.set('port',(process.env.PORT || 5000));
+
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+//views is directory for all template files
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+
+var checkCredentials = function(username,password,route,callback){
+  var client = new pg.Client(process.env.DATABASE_URL);
+  client.connect(function(err){
+    if(err){
+      throw err;
+    }
+
+    var passwordQuery = "SELECT * FROM access WHERE password=crypt('"+
+                        password+ "',password) AND username='"+
+                        username+"' AND page='"+route+"';";
+
+    client.query(passwordQuery,function(err,result){
+      client.end(function(err){
+        if(err){
+          throw err;
+        }
+      });
+      if(err){
+        throw err;
+      }
+      console.log('result.rows[0]: '+result.rows[0]);
+      if(typeof result.rows[0] !== 'undefined') {
+        console.log('results returned!');
+        return callback(true);
+      }
+      else {
+        console.log('no results returned...');
+        return callback(false);
+      }
+    });
+  });
+}
+
+/*var auth = function(req,res,next){
   var user = basicAuth(req);
   if(!user||!user.name||!user.pass){
     res.set('WWW-Authenticate','Basic realm=Authorization Required');
@@ -24,48 +69,42 @@ var auth = function(req,res,next){
       }
     });
   });
-}
+}*/
 
-var authResults = function(req,res,next){
-  var user = basicAuth(req);
-  if(!user||!user.name||!user.pass){
+var auth = function(req,res,next) {
+  function unauthorized(res) {
     res.set('WWW-Authenticate','Basic realm=Authorization Required');
     res.sendStatus(401);
     return;
   }
-  var passwordQuery = "SELECT * FROM access WHERE password=crypt('"+
-                      user.pass+ "',password);";
 
-  pg.connect(process.env.DATABASE_URL, function(err, client, done){
-    client.query(passwordQuery,function(err,result){
-      if(user.name==='bbaclig'&&result.rows.length===1&&(result.rows[0]).page==='results'){
-        next();
-      }
-      else {
-        res.set('WWW-Authenticate','Basic realm=Authorization Required');
-        res.sendStatus(401);
-        return;
-      }
-    });
+  var user = basicAuth(req);
+
+  if(!user || !user.name || !user.pass) {
+    return unauthorized(res);
+  }
+
+  var route = 'home';
+  if(req.route.path === '/results'){
+    route = 'results';
+  }
+
+  checkCredentials(user.name,user.pass,route,function(result){
+    console.log('checkCredentials result: '+result);
+    if(result){
+      console.log('next function');
+      next();
+    }
+    else {
+      console.log('unauthorized');
+      return unauthorized(res);
+    }
   });
 }
 
-var app = express();
 
-var pg = require('pg');
 
-app.set('port',(process.env.PORT || 5000));
-
-app.use(express.static(__dirname + '/public'));
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-//views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-
-app.get('/results', authResults, function(request, response, next){
+app.get('/results', auth, function(request, response, next){
   pg.connect(process.env.DATABASE_URL, function(err, client, done){
     client.query('SELECT * FROM question1',function(err,result){
       done();
@@ -74,7 +113,6 @@ app.get('/results', authResults, function(request, response, next){
         response.send("Error " + err);
       }
       else {
-        //response.render('pages/results', {results: result.rows});
         request.question1 = result.rows;
         next();
       }
