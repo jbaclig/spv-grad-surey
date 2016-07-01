@@ -48,8 +48,6 @@ function submitSurvey(event){
     q7: committeeVolInfo
   });
 
-  //console.log(answers);
-
   $.ajax({
     type: 'POST',
     data: answers,
