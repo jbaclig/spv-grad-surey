@@ -41,6 +41,12 @@
           <li><%= r.name %> - <%= r.address %></li>
         <% }); %>
       </ul>
+      <h4>Graduation Committee Volunteers</h4>
+      <ul>
+        <% comVols.forEach(function(r){ %>
+          <li><%= r.name %>, <%= r.email %></li>
+        <% }); %>
+      </ul>
     </div>
     <script>
       function htmlDecode(input){

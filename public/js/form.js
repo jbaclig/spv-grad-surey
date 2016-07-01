@@ -27,6 +27,16 @@ function submitSurvey(event){
     q6answers.push(q6address);
   }
 
+  var committeeVolInfo;
+  if($('input[name="q7-group"]:checked').val() === 'a'){
+    committeeVolInfo = new Object();
+    committeeVolInfo.name = $('#q7-name').val();
+    committeeVolInfo.email = $('#q7-email').val();
+  }
+  else {
+    committeeVolInfo = $('input[name="q7-group"]:checked').val();
+  }
+
   var answers = JSON.stringify({
     q1: $('input[name="q1-group"]:checked').val(),
     q2: $('input[name="q2-group"]:checked').val(),
@@ -34,7 +44,8 @@ function submitSurvey(event){
     q4: $('input[name="q4-group"]:checked').val(),
     q5: q5answers,
     q5O: q5other,
-    q6: q6answers
+    q6: q6answers,
+    q7: committeeVolInfo
   });
 
   //console.log(answers);

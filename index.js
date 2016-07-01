@@ -56,11 +56,6 @@ var getResults = function(table,client,results,callback){
   });
 }
 
-var renderResults = function(client,results,res){
-
-}
-
-
 var auth = function(req,res,next) {
   function unauthorized(res) {
     res.set('WWW-Authenticate','Basic realm=Authorization Required');
@@ -91,7 +86,7 @@ var auth = function(req,res,next) {
 
 app.get('/results',auth,function(req,res,next){
   var tables = ['question1','question2','question3','question4','question5',
-                'question5_other','venue_recs'];
+                'question5_other','venue_recs','committee_volunteers'];
   var results = new Object();
   var resultsCount = 0;
 
@@ -127,6 +122,9 @@ app.get('/results',auth,function(req,res,next){
           case 'venue_recs':
             req.venue_recs = result;
             break;
+          case 'committee_volunteers':
+            req.com_vols = result;
+            break;
         }
         resultsCount++;
         if(resultsCount === tables.length) {
@@ -148,7 +146,8 @@ app.get('/results',auth,function(req,res,next){
     question4: req.question4,
     question5: req.question5,
     question5Other: req.question5_other,
-    venueRecs: req.venue_recs
+    venueRecs: req.venue_recs,
+    comVols: req.com_vols
   });
 });
 
@@ -160,10 +159,11 @@ app.post('/',function(request,response){
   q4 = request.body.q4,
   q5 = request.body.q5,
   q5other = request.body.q5O;
-  q6 = request.body.q6;
+  q6 = request.body.q6,
+  q7 = request.body.q7;
 
   var queryQ1, queryQ2, queryQ3 = [], queryQ4, queryQ5 = [], queryQ5Other = [],
-  queryQ6;
+  queryQ6,queryQ7;
 
   if(typeof q1 !== 'undefined') {
     queryQ1 = 'UPDATE question1 SET ' + q1 + '=' + q1 + '+1 WHERE id=1'
@@ -192,6 +192,13 @@ app.post('/',function(request,response){
   }
   else if (q6.length === 2){
     queryQ6 = 'INSERT INTO venue_recs VALUES ($$'+q6[0]+'$$,$$'+q6[1]+'$$)';
+  }
+  if(typeof q7 !== 'undefined') {
+    //console.log('q7: '+JSON.stringify(q7));
+    if(q7 !== 'b') {
+      queryQ7 = 'INSERT INTO committee_volunteers VALUES ($$'+q7.name+
+        '$$,$$'+q7.email+'$$)';
+    }
   }
 
   pg.connect(process.env.DATABASE_URL, function(err, client, done){
@@ -255,6 +262,15 @@ app.post('/',function(request,response){
     }
     if(typeof queryQ6!== 'undefined'){
       client.query(queryQ6,function(err,result){
+        done();
+        if(err){
+          console.error(err);
+          response.send("Error " + err);
+        }
+      });
+    }
+    if(typeof queryQ7!== 'undefined'){
+      client.query(queryQ7,function(err,result){
         done();
         if(err){
           console.error(err);
