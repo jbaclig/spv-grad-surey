@@ -1,3 +1,32 @@
+$(function(){
+  $('#survey-carousel').carousel();
+});
+
+//display Submit button
+$('.carousel-control-next').on('click',function(event){
+  if($('div.item.next-to-last').hasClass('active')){
+    console.log('last slide showing');
+    $('.carousel-control-next').addClass('hidden');
+    $('.carousel-control-submit').removeClass('hidden');
+  }
+});
+
+//hide Submit button
+$('.carousel-control-prev').on('click',function(event){
+  if($('div.item.last').hasClass('active')){
+    console.log('last slide showing');
+    $('.carousel-control-submit').addClass('hidden');
+    $('.carousel-control-next').removeClass('hidden');
+  }
+});
+
+//smooth scroll to survey
+$('#btn-take-survey').click(function(){
+  $('html, body').animate({
+    scrollTop: $('#grad-survey').offset().top
+  },500);
+});
+
 $('#survey-submit').on('click',submitSurvey);
 
 function submitSurvey(event){
@@ -61,4 +90,9 @@ function submitSurvey(event){
   });
 
   $('#grad-survey').trigger('reset');
+
+  //smooth scroll to top of page
+  $('html, body').animate({
+    scrollTop: $('body').offset().top
+  },500);
 };

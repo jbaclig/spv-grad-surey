@@ -1,3 +1,93 @@
+.jumbotron p {
+  font-size: 16px;
+}
+
+.intro>.container, .survey>.container {
+  height: 100vh;
+}
+
+.survey-container-cell {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.form-group {
+  width: 60%;
+  margin: 0 auto;
+}
+
+#survey-carousel {
+  height: 300px;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 250px;
+  bottom: 6px;
+  opacity: 1;
+  text-shadow: none;
+}
+
+.carousel-control-prev {
+  left: 350px;
+}
+
+.carousel-control-next, .carousel-control-submit {
+  left: 550px;
+}
+
+.carousel-control.btn-prev, .carousel-control.btn-next, #btn-take-survey{
+  background-color: #FFC400;
+  border-color: #FFAB00;
+  color: #FFF;
+}
+
+.carousel-control.btn-prev:hover, .carousel-control.btn-next:hover, #btn-take-survey:hover {
+  background-color: #FFAB00;
+  color: #FFF;
+}
+
+.btn-submit {
+  background-color: #8BC34A;
+  border-color: #7CB342;
+  color: #FFF;
+}
+
+.btn-submit:hover {
+  background-color: #7CB342;
+}
+
+.carousel-control.left, .carousel-control.right {
+  background-image: none;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.survey,.intro{
+  background: #0785AB;
+  -webkit-background: linear-gradient(#0785AB, #044C62);
+  -moz-background: linear-gradient(#0785AB, #044C62);
+  background: linear-gradient(#0785AB, #044C62);
+}
+
+.survey-container-cell, .intro-body {
+  background-color: #FFF;
+  color: #424242;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.page-header {
+  color: #FFF;
+}
+
+
 .chart-container {
   width: 60%;
 }
