@@ -92,6 +92,7 @@ function submitSurvey(event){
   $('#grad-survey').trigger('reset');
   $('#grad-survey input').prop('disabled',true);
   $('.carousel-control').addClass('hidden');
+  $('.survey-container-cell').css('opacity','0.6');
 
   //smooth scroll to top of page
   $('html, body').animate({
