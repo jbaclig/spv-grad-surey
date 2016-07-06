@@ -90,6 +90,8 @@ function submitSurvey(event){
   });
 
   $('#grad-survey').trigger('reset');
+  $('#grad-survey input').prop('disabled',true);
+  $('.carousel-control').addClass('hidden');
 
   //smooth scroll to top of page
   $('html, body').animate({
